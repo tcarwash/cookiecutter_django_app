@@ -13,4 +13,6 @@ COPY ./src /app
 WORKDIR /app
 
 COPY ./entrypoint.sh /
+COPY ./test_alive.py /
+
 ENTRYPOINT ["sh", "/entrypoint.sh"]
