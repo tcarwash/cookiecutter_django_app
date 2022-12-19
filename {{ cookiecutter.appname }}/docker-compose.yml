@@ -11,7 +11,7 @@ services:
     build: .
     command: '/bin/sh /entrypoint.sh'
     volumes:
-      - ./src:/code
+      - ./src:/app
     ports:
       - "8000:8000"
     environment:
@@ -23,5 +23,6 @@ services:
       - SUPER_USER_PASSWORD=${SUPER_USER_PASSWORD}
       - SUPER_USER_EMAIL=${SUPER_USER_EMAIL}
       - SUPER_USER_NAME=${SUPER_USER_NAME}
+      - DOMAIN_NAME=${DOMAIN_NAME}
     depends_on:
       - db
