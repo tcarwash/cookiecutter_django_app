@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${PG_DB}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PW}
+  web:
+    build: .
+    command: '/bin/sh /entrypoint.sh'
+    volumes:
+      - ./src:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=${PG_DB}
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PW}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - SUPER_USER_PASSWORD=${SUPER_USER_PASSWORD}
+      - SUPER_USER_EMAIL=${SUPER_USER_EMAIL}
+      - SUPER_USER_NAME=${SUPER_USER_NAME}
+    depends_on:
+      - db
