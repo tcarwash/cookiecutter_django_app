@@ -1,19 +1,23 @@
 services:
   db:
     image: postgres
+    restart: always
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${PG_DB}
       - POSTGRES_USER=${PG_USER}
       - POSTGRES_PASSWORD=${PG_PW}
+    networks:
+      - backend
   web:
     build: .
     command: '/bin/sh /entrypoint.sh'
+    restart: always
     volumes:
       - ./src:/app
-    ports:
-      - "8000:8000"
+      - ./data/static:/app/static
+      - ./data/media:/app/media_prod
     environment:
       - POSTGRES_NAME=${PG_DB}
       - POSTGRES_USER=${PG_USER}
@@ -23,6 +27,26 @@ services:
       - SUPER_USER_PASSWORD=${SUPER_USER_PASSWORD}
       - SUPER_USER_EMAIL=${SUPER_USER_EMAIL}
       - SUPER_USER_NAME=${SUPER_USER_NAME}
-      - DOMAIN_NAME=${DOMAIN_NAME}
+      - HOST=${HOST}
+      - SECRET_KEY=${SECRET_KEY}
     depends_on:
       - db
+    networks:
+      - frontend
+      - backend
+  proxy:
+    restart: always
+    depends_on:
+      - web
+    build: ./nginx
+    volumes:
+      - ./data/static:/home/app/web/staticfiles
+      - ./data/media:/home/app/web/media
+    ports:
+      - 8000:80
+    networks:
+      - frontend
+
+networks:
+  backend:
+  frontend:

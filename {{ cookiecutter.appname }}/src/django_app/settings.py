@@ -20,14 +20,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-#t083t7wdux3x!yv-y&5$$r4j-1t^nk7*rq_a7-vg+d$d60j"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
-ALLOWED_HOSTS += os.environ.get("DOMAIN_NAME")
+CONFIGURED_HOST = os.environ.get("HOST")
 
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    CONFIGURED_HOST.split("://")[-1].split(":")[0],
+]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    CONFIGURED_HOST,
+]
 
 # Application definition
 
@@ -127,6 +135,10 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+# Media
+MEDIA_ROOT = os.path.join(BASE_DIR, "media_prod")
+MEDIA_URL = "media/"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -139,10 +151,6 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # Login
 LOGIN_REDIRECT_URL = "{{ cookiecutter.appname }}-home"
 LOGIN_URL = "login"
-
-# Media
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = "/media/"
 
 # Email
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
