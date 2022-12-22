@@ -1,4 +1,5 @@
 {
     "appname": "app",
-    "appname_stylized": "App"
+    "appname_stylized": "App",
+    "host": "http://localhost"
 }
